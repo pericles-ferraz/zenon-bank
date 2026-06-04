@@ -1,49 +1,37 @@
 package br.com.zenon;
 
 import br.com.zenon.fraud.Transaction;
-import br.com.zenon.fraud.TransactionType;
+import br.com.zenon.fraud.TransactionIngestor;
 
-import java.math.BigDecimal;
+import java.io.IOException;
+import java.util.List;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
-    static void main() {
+    public static void main(String[] args) {
 
-        Transaction transaction1 = new Transaction(
-                1,
-                TransactionType.PAYMENT,
-                new BigDecimal("9839.64"),
-                "C1231006815",
-                new BigDecimal("170136.0"),
-                new BigDecimal("160296.36"),
-                "M1979787155",
-                new BigDecimal("0.0"),
-                new BigDecimal("0.0"),
-                0,
-                1
-        );
+        String csvFile = "../data/PS_20174392719_1491204439457_log.csv";
 
-        Transaction transaction2 = new Transaction(
-                743,
-                TransactionType.CASH_OUT,
-                new BigDecimal("850002.52"),
-                "C1280323807",
-                new BigDecimal("850002.52"),
-                new BigDecimal("0.0"),
-                "C873221189",
-                new BigDecimal("6510099.11"),
-                new BigDecimal("7360101.63"),
-                1,
-                0
-        );
+        TransactionIngestor ingestor = new TransactionIngestor();
 
-        System.out.println("Transaction 1:");
-        System.out.println(transaction1);
+        try {
 
-        System.out.println();
+            List<Transaction> transactions = ingestor.ingest(csvFile);
 
-        System.out.println("Transaction 2:");
-        System.out.println(transaction2);
+            System.out.printf(
+                    "Imported %,d transactions%n%n",
+                    transactions.size()
+            );
+
+            transactions.stream()
+                    .limit(10)
+                    .forEach(System.out::println);
+
+        } catch (IOException e) {
+            System.err.println(
+                    "Error reading file '" + csvFile + "': " + e.getMessage()
+            );
+        }
     }
 }

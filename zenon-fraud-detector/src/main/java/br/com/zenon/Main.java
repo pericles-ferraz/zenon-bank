@@ -9,30 +9,19 @@ public class Main {
 
         String csvFile = "../data/PS_20174392719_1491204439457_log.csv";
 
-        TransactionIngestor ingestor = new TransactionIngestor();
-
         try {
 
-            List<Transaction> transactions = ingestor.ingest(csvFile);
+            TransactionReport transactionReport = new TransactionReport();
+            TransactionReport.ReportMain reportMain = transactionReport.generateReport(csvFile);
 
-            String noExistCustomer = "C12345";
-            String existCustomer = "C1231006815";
-
-            IO.println("Testes usando list: ");
-            TransactionRepository repositoryList = new TransactionListRepository(transactions);
-            repositoryList.getTransactionByName(noExistCustomer).ifPresentOrElse(IO::println, () -> IO.println("Transação não encontrada para o cliente " + noExistCustomer));
-            repositoryList.getTransactionByName(existCustomer).ifPresentOrElse(IO::println, () -> IO.println("Transação não encontrada para o cliente " + existCustomer));
-
-            IO.println();
-
-            IO.println("Testes usando Map: ");
-            TransactionRepository repositoryMap = new TransactionMapRepository(transactions);
-            repositoryMap.getTransactionByName(noExistCustomer).ifPresentOrElse(IO::println, () -> IO.println("Transação não encontrada para o cliente " + noExistCustomer));
-            repositoryMap.getTransactionByName(existCustomer).ifPresentOrElse(IO::println, () -> IO.println("Transação não encontrada para o cliente " + existCustomer));
-
+            IO.println("""
+                        Total de linhas: %d
+                        Total de fraudes: %d
+                        Valor total transacionado: %.2f
+                    """.formatted(reportMain.totalLines(), reportMain.totalFrauds(), reportMain.totalValue()));
 
         } catch (Exception e) {
-            System.err.println(
+            System.out.println(
                     "Error reading file '" + csvFile + "': " + e.getMessage()
             );
         }

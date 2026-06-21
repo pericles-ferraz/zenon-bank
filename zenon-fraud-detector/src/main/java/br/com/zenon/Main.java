@@ -11,7 +11,7 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
 
-        String csvFile = "../data/PS_20174392719_1491204439457_log.csv";
+        String csvFile = "../data/paysim_with_bad_data.csv";
 
         TransactionIngestor ingestor = new TransactionIngestor();
 
@@ -28,7 +28,7 @@ public class Main {
                     .limit(10)
                     .forEach(System.out::println);
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println(
                     "Error reading file '" + csvFile + "': " + e.getMessage()
             );

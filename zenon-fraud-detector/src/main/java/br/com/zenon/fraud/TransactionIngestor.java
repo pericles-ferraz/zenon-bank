@@ -24,32 +24,37 @@ public class TransactionIngestor {
 
             while ((line = reader.readLine()) != null && count < MAX_RECORDS) {
 
-                String[] fields = line.split(",");
+                try{
+                    String[] fields = line.split(",");
 
-                TransactionCustomer origin = new TransactionCustomer(
-                        fields[3],
-                        new BigDecimal(fields[4]),
-                        new BigDecimal(fields[5])
-                );
+                    TransactionCustomer origin = new TransactionCustomer(
+                            fields[3],
+                            new BigDecimal(fields[4]),
+                            new BigDecimal(fields[5])
+                    );
 
-                TransactionCustomer recipient = new TransactionCustomer(
-                        fields[6],
-                        new BigDecimal(fields[7]),
-                        new BigDecimal(fields[8])
-                );
+                    TransactionCustomer recipient = new TransactionCustomer(
+                            fields[6],
+                            new BigDecimal(fields[7]),
+                            new BigDecimal(fields[8])
+                    );
 
-                Transaction transaction = new Transaction(
-                        Integer.parseInt(fields[0]),
-                        TransactionType.valueOf(fields[1]),
-                        new BigDecimal(fields[2]),
-                        origin,
-                        recipient,
-                        "1".equals(fields[9]),
-                        "1".equals(fields[10])
-                );
+                    Transaction transaction = new Transaction(
+                            Integer.parseInt(fields[0]),
+                            TransactionType.valueOf(fields[1]),
+                            new BigDecimal(fields[2]),
+                            origin,
+                            recipient,
+                            "1".equals(fields[9]),
+                            "1".equals(fields[10])
+                    );
 
-                transactions.add(transaction);
-                count++;
+                    transactions.add(transaction);
+                    count++;
+
+                } catch (Exception ex){
+                    System.out.println(String.format("Erro: %s | %s", line, ex.toString() ));
+                }
             }
         }
 

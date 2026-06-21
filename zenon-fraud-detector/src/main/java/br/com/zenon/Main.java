@@ -1,10 +1,7 @@
 package br.com.zenon;
 
-import br.com.zenon.fraud.FraudAnalyzer;
-import br.com.zenon.fraud.Transaction;
-import br.com.zenon.fraud.TransactionIngestor;
+import br.com.zenon.fraud.*;
 
-import java.math.RoundingMode;
 import java.util.List;
 
 public class Main {
@@ -18,20 +15,21 @@ public class Main {
 
             List<Transaction> transactions = ingestor.ingest(csvFile);
 
-            FraudAnalyzer fraudAnalyzer = new FraudAnalyzer(transactions);
+            String noExistCustomer = "C12345";
+            String existCustomer = "C1231006815";
 
-            IO.println("1. Total de Fraudes: " + fraudAnalyzer.countFrauds());
+            IO.println("Testes usando list: ");
+            TransactionRepository repositoryList = new TransactionListRepository(transactions);
+            repositoryList.getTransactionByName(noExistCustomer).ifPresentOrElse(IO::println, () -> IO.println("Transação não encontrada para o cliente " + noExistCustomer));
+            repositoryList.getTransactionByName(existCustomer).ifPresentOrElse(IO::println, () -> IO.println("Transação não encontrada para o cliente " + existCustomer));
 
-            IO.println("2. Top 3 Fraudes de Maior Valor:");
-            fraudAnalyzer.getHighestValueFrauds(3).stream().forEach( t ->  IO.println(t.amount().setScale(2, RoundingMode.HALF_UP)));
+            IO.println();
 
-            IO.println("3. Clientes Suspeitos:");
-            fraudAnalyzer.getFraudsters(5).forEach(f -> IO.println(f));
+            IO.println("Testes usando Map: ");
+            TransactionRepository repositoryMap = new TransactionMapRepository(transactions);
+            repositoryMap.getTransactionByName(noExistCustomer).ifPresentOrElse(IO::println, () -> IO.println("Transação não encontrada para o cliente " + noExistCustomer));
+            repositoryMap.getTransactionByName(existCustomer).ifPresentOrElse(IO::println, () -> IO.println("Transação não encontrada para o cliente " + existCustomer));
 
-            IO.println("4. Prejuízo total: " + fraudAnalyzer.getTotalLoss());
-
-            IO.println("5. Fraudes por tipo:");
-            fraudAnalyzer.fraudByType().forEach((type, count) -> IO.println("- %s: %d ".formatted(type, count)));
 
         } catch (Exception e) {
             System.err.println(
